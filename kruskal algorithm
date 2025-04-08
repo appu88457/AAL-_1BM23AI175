@@ -1,0 +1,128 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define V 5  // Number of vertices in the graph
+#define E 7  // Number of edges in the graph
+
+// Edge structure to store an edge's information
+struct Edge {
+    int src, dest, weight;
+};
+
+// Subset structure for Union-Find
+struct Subset {
+    int parent;
+    int rank;
+};
+
+// Function to find the parent of a node (with path compression)
+int find(struct Subset subsets[], int i) {
+    if (subsets[i].parent != i) {
+        subsets[i].parent = find(subsets, subsets[i].parent);
+    }
+    return subsets[i].parent;
+}
+
+// Function to do Union of two subsets (with union by rank)
+void Union(struct Subset subsets[], int x, int y) {
+    int xroot = find(subsets, x);
+    int yroot = find(subsets, y);
+
+    if (subsets[xroot].rank < subsets[yroot].rank) {
+        subsets[xroot].parent = yroot;
+    } else if (subsets[xroot].rank > subsets[yroot].rank) {
+        subsets[yroot].parent = xroot;
+    } else {
+        subsets[yroot].parent = xroot;
+        subsets[xroot].rank++;
+    }
+}
+
+// Comparator function to sort the edges based on their weight
+int compareEdges(const void* a, const void* b) {
+    return ((struct Edge*)a)->weight - ((struct Edge*)b)->weight;
+}
+
+// Function to implement Kruskal's algorithm
+void kruskalMST(struct Edge edges[], int graph[V][V]) {
+    struct Edge result[V];  // Array to store the MST edges
+    int e = 0;  // Count of edges in MST
+    int i = 0;  // Index for sorted edges
+
+    // Step 1: Sort all the edges in non-decreasing order of their weights
+    qsort(edges, E, sizeof(edges[0]), compareEdges);
+
+    // Create subsets for Union-Find
+    struct Subset *subsets = (struct Subset*)malloc(V * sizeof(struct Subset));
+    for (v; v < V; v++) {
+        subsets[v].parent = v;
+        subsets[v].rank = 0;
+    }
+
+    // Step 2: Pick the smallest edge. Check if it forms a cycle using Union-Find.
+    while (e < V - 1) {
+        struct Edge next_edge = edges[i++];
+
+        int x = find(subsets, next_edge.src);
+        int y = find(subsets, next_edge.dest);
+
+        // If including this edge does not cause a cycle, include it in the result
+        if (x != y) {
+            result[e++] = next_edge;
+            Union(subsets, x, y);
+        }
+    }
+
+    // Print the MST
+    printf("\nMinimum Spanning Tree (MST) Edges:\n");
+    printf("Edge \tWeight\n");
+    for (int i = 0; i < e; i++) {
+        printf("%c - %c \t%d\n", result[i].src + 'A', result[i].dest + 'A', result[i].weight);
+    }
+
+    // Print the graphical representation of the MST
+    printf("\nGraphical Representation of MST:\n");
+    printf("\n       2\n");
+    printf("   A -------- B\n");
+
+    if (result[0].src == 0 && result[0].dest == 1) {
+        printf("   | \n  3| \n   | \n");
+    }
+
+    if (result[1].src == 0 && result[1].dest == 3) {
+        printf("   D -------- C\n");
+    }
+
+    if (result[2].src == 3 && result[2].dest == 4) {
+        printf("       5     |\n");
+        printf("              |\n");
+        printf("              E\n");
+    }
+
+    if (result[3].src == 3 && result[3].dest == 2) {
+        printf("       4     |\n");
+    }
+}
+
+int main() {
+    // Representation of the graph as an array of edges
+    int v=0;
+    struct Edge edges[] = {
+        {0, 1, 2},  // A - B with weight 2
+        {0, 3, 3},  // A - D with weight 3
+        {3, 2, 4},  // D - C with weight 4
+        {3, 4, 5},  // D - E with weight 5
+        {1, 2, 7},  // B - C with weight 7
+        {1, 4, 0},  // B - E with weight 0 (for demonstration)
+        {2, 4, 6}   // C - E with weight 6
+    };
+
+    kruskalMST(edges, NULL);  // Function call to find and display the MST
+
+    return 0;
+}
+
+
+    return 0;
+}
