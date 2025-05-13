@@ -29,3 +29,7 @@ int main() {
 
   return 0;
 } ;
+
+
+output:
+pattern 'him' is found in the string
