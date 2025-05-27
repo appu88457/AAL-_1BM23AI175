@@ -1,44 +1,42 @@
-#include <stdio.h>
-
-void selectionSort(int arr[], int n) {
-	int i,j;
-    for (i = 0; i < n - 1; i++) {
-        int min_idx = i;
-        for ( j = i + 1; j < n; j++) {
-            if (arr[j] < arr[min_idx]) {
-                min_idx = j;
-            }
+#include<stdio.h>
+#include<time.h>
+int main(){
+    int n,i,j,min,temp;
+    printf("enter array size: ");
+    scanf("%d",&n);
+    int a[n];
+    printf("Enter %d array elements:",n);
+    for(i=0;i<n;i++){
+        scanf("%d",&a[i]);
+    }
+   double start = clock();
+   for(i=0;i<n-1;i++){
+    int min = i;
+    for(j=i+1;j<n;j++){
+        if (a[j]<a[min]){
+            min = j;
         }
-        int temp = arr[min_idx];
-        arr[min_idx] = arr[i];
-        arr[i] = temp;
+    }
+    if (min!=i){
+        temp=a[min];
+        a[min]=a[i];
+        a[i]=temp;
     }
 }
-
-void printArray(int arr[], int n) {
-	int i;
-    for (i = 0; i < n; i++) {
-        printf("%d ", arr[i]);
-    }
-    printf("\n");
+  double end = clock();
+  double time_taken = (double) (end-start)/CLOCKS_PER_SEC;
+  for(i=0;i<n;i++){
+      printf("%d ",a[i]);
+     
+  }
+  printf("\ntime taken for selection sorting: %f",time_taken);
 }
-
-int main() {
-    int arr[] = {64, 25, 12, 22, 11};
-    int n = sizeof(arr) / sizeof(arr[0]);
-    
-    printf("Original array: ");
-    printArray(arr, n);
-    
-    selectionSort(arr, n);
-    
-    printf("Sorted array: ");
-    printArray(arr, n);
-    
-    return 0;
-}
-
-
-OUTPUT:
-Original array: 64 25 12 22 11 
-Sorted array: 11 12 22 25 64
+output:
+enter array size: 5
+Enter 5 array elements:1
+23
+32
+21
+12
+1 12 21 23 32 
+time taken for selection sorting: 0.000001
